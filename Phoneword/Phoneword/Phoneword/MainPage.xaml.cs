@@ -13,6 +13,8 @@ namespace Phoneword
         private Button _translateButton;
         private Button _callButton;
 
+        private string _translatedNumber;
+
 		public MainPage()
 		{
             var stackLayout = new StackLayout()
@@ -44,6 +46,8 @@ namespace Phoneword
                 IsEnabled = false
             };
 
+            _callButton.Clicked += CallButtonClicked;
+
             stackLayout.Children.Add(label);
             stackLayout.Children.Add(_entry);
             stackLayout.Children.Add(_translateButton);
@@ -52,15 +56,24 @@ namespace Phoneword
             Content = stackLayout;
 		}
 
+        private async void CallButtonClicked(object sender, EventArgs e)
+        {
+            if (await DisplayAlert("Confirm Call", "Do you want to call this number?", "Yes", "No"))
+            {
+                var dialer = DependencyService.Get<IDialer>();
+                await dialer.DialAsync(_translatedNumber);
+            }
+        }
+
         private void TranslateButtonClicked(object sender, EventArgs e)
         {
             var textToTranslate = _entry.Text;
 
-            var translated = PhonewordTranslator.ToNumber(textToTranslate);
+            _translatedNumber = PhonewordTranslator.ToNumber(textToTranslate);
 
-            if (!string.IsNullOrWhiteSpace(translated))
+            if (!string.IsNullOrWhiteSpace(_translatedNumber))
             {
-                _callButton.Text = $"Call {translated}";
+                _callButton.Text = $"Call {_translatedNumber}";
                 _callButton.IsEnabled = true;
             }
             else
