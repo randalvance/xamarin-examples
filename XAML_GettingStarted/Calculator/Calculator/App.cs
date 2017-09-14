@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace Calculator
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public class App : Application
 	{
 		public App()
